@@ -14,24 +14,15 @@ import {
 } from "@/components/shared/table/DataTableFilters";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  cancelOrder,
-  getOrders,
-  placeOrderWithPayment,
-} from "@/services/order.services";
-import {
-  IOrder,
-  IOrderResponse,
-  OrderStatus,
-  PaymentStatus,
-} from "@/types/order.types";
+import { cancelOrder, getOrders, placeOrder } from "@/services/order.services";
+import { IOrder, IOrderResponse, OrderStatus } from "@/types/order.types";
 import {
   formatDate,
   formatPrice,
   getOrderItemCount,
   getOrderShortId,
 } from "./orderUtils";
-import { OrderStatusBadge, PaymentStatusBadge } from "./OrderBadges";
+import { OrderStatusBadge } from "./OrderBadges";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -60,11 +51,6 @@ const buildQueryString = (
   const statusValue = filters.status;
   if (typeof statusValue === "string" && statusValue.length > 0) {
     params.set("status", statusValue);
-  }
-
-  const paymentValue = filters.paymentStatus;
-  if (typeof paymentValue === "string" && paymentValue.length > 0) {
-    params.set("paymentStatus", paymentValue);
   }
 
   return params.toString();
@@ -104,18 +90,17 @@ const OrderListPage = () => {
   const meta = ordersResponse?.meta;
 
   const payMutation = useMutation({
-    mutationFn: placeOrderWithPayment,
+    mutationFn: placeOrder,
     onSuccess: (response) => {
       if (!response.success) {
-        toast.error(response.message || "Failed to initiate payment");
+        toast.error(response.message || "Failed to confirm order");
         return;
       }
-      if (response.data?.paymentUrl) {
-        window.location.href = response.data.paymentUrl;
-      }
+      toast.success("Order confirmed");
+      queryClient.invalidateQueries({ queryKey: ["customer-orders"] });
     },
     onError: () => {
-      toast.error("Failed to initiate payment");
+      toast.error("Failed to confirm order");
     },
   });
 
@@ -167,19 +152,11 @@ const OrderListPage = () => {
         cell: ({ row }) => <OrderStatusBadge status={row.original.status} />,
       },
       {
-        header: "Payment",
-        cell: ({ row }) => (
-          <PaymentStatusBadge status={row.original.paymentStatus} />
-        ),
-      },
-      {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
           const order = row.original;
           const isPending = order.status === OrderStatus.PENDING;
-          const canPay =
-            isPending && order.paymentStatus === PaymentStatus.PENDING;
           const canCancel = isPending;
           const canTrack = [
             OrderStatus.PLACED,
@@ -205,10 +182,10 @@ const OrderListPage = () => {
                   <Button
                     size="sm"
                     onClick={() => handlePayClick(order.id)}
-                    disabled={!canPay || payMutation.isPending}
+                    disabled={!isPending || payMutation.isPending}
                     className="rounded-sm"
                   >
-                    Pay & confirm
+                    Confirm order
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -271,15 +248,6 @@ const OrderListPage = () => {
           { label: "Shipped", value: OrderStatus.SHIPPED },
           { label: "Delivered", value: OrderStatus.DELIVERED },
           { label: "Cancelled", value: OrderStatus.CANCELLED },
-        ],
-      },
-      {
-        id: "paymentStatus",
-        label: "Payment",
-        type: "single-select",
-        options: [
-          { label: "Pending", value: PaymentStatus.PENDING },
-          { label: "Paid", value: PaymentStatus.PAID },
         ],
       },
     ],

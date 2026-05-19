@@ -6,7 +6,7 @@ Web client for **Niramoy**, a multi-vendor online medicine marketplace. Customer
 
 | Environment         | URL                                        |
 | ------------------- | ------------------------------------------ |
-| Production (Vercel) | https://ph-assignment5-frontend.vercel.app |
+| Production (Vercel) | https://ph-assignment4-frontend.vercel.app |
 
 ## Tech stack
 

@@ -5,7 +5,6 @@ import { ApiErrorResponse, ApiResponse } from "@/types/api.types";
 import {
   IOrder,
   IOrderResponse,
-  IPlaceOrderResponse,
   OrderStatus,
   PaymentStatus,
 } from "@/types/order.types";
@@ -38,13 +37,11 @@ export const initiateOrder = async (
   }
 };
 
-export const placeOrderWithPayment = async (
+export const placeOrder = async (
   orderId: string,
-): Promise<ApiResponse<IPlaceOrderResponse>> => {
+): Promise<ApiResponse<unknown>> => {
   try {
-    return await httpClient.post<IPlaceOrderResponse>(
-      `/order/${orderId}/place`,
-    );
+    return await httpClient.post<unknown>(`/order/${orderId}/place`);
   } catch (error: any) {
     return {
       success: false,

@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { IOrder, OrderStatus } from "@/types/order.types";
-import { OrderStatusBadge, PaymentStatusBadge } from "./OrderBadges";
+import { OrderStatusBadge } from "./OrderBadges";
 import { formatDate, formatPrice, getOrderShortId } from "./orderUtils";
 import {
   Package,
@@ -57,7 +57,6 @@ const OrderDetailsContent = ({ order }: OrderDetailsContentProps) => {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <OrderStatusBadge status={order.status} />
-          <PaymentStatusBadge status={order.paymentStatus} />
         </div>
       </div>
 
@@ -281,28 +280,6 @@ const OrderDetailsContent = ({ order }: OrderDetailsContentProps) => {
               </div>
             </div>
           ))}
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Payment & Transaction */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-1">
-          <p className="text-sm font-semibold">Payment</p>
-          <p className="text-sm text-muted-foreground">
-            {order.paymentStatus === "PAID"
-              ? "Payment completed"
-              : "Payment pending"}
-          </p>
-        </div>
-        <div className="space-y-1">
-          <p className="text-sm font-semibold">Transaction ID</p>
-          <p className="text-sm text-muted-foreground break-all font-mono">
-            {order.paymentStatus === "PAID" && order.payment?.transactionId
-              ? order.payment.transactionId
-              : "Not available"}
-          </p>
         </div>
       </div>
     </div>

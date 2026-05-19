@@ -56,7 +56,7 @@ const OrderCheckoutPage = () => {
         toast.error(response.message || "Failed to initiate order");
         return;
       }
-      toast.success("Order initiated. Payment pending.");
+      toast.success("Order initiated. Please confirm your order.");
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       router.push("/dashboard/order");
     },
@@ -283,9 +283,7 @@ const OrderCheckoutPage = () => {
                   disabled={orderMutation.isPending || !isAmountValid}
                   className="w-full rounded-sm"
                 >
-                  {orderMutation.isPending
-                    ? "Processing..."
-                    : "Initiate order with pay later"}
+                  {orderMutation.isPending ? "Processing..." : "Initiate order"}
                 </Button>
 
                 {!isAmountValid && hasItems && (

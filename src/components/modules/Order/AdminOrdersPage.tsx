@@ -19,14 +19,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getOrdersByParams } from "@/services/order.services";
-import {
-  IOrder,
-  IOrderResponse,
-  OrderStatus,
-  PaymentStatus,
-} from "@/types/order.types";
+import { IOrder, IOrderResponse, OrderStatus } from "@/types/order.types";
 import OrderDetailsDialog from "./OrderDetailsDialog";
-import { OrderStatusBadge, PaymentStatusBadge } from "./OrderBadges";
+import { OrderStatusBadge } from "./OrderBadges";
 import { formatDate, formatPrice, getOrderShortId } from "./orderUtils";
 
 const buildQueryString = (
@@ -39,10 +34,6 @@ const buildQueryString = (
     limit: pagination.pageSize,
     searchTerm: searchTerm.trim() || undefined,
     status: typeof filters.status === "string" ? filters.status : undefined,
-    paymentStatus:
-      typeof filters.paymentStatus === "string"
-        ? filters.paymentStatus
-        : undefined,
   };
 };
 
@@ -103,12 +94,6 @@ const AdminOrdersPage = () => {
         cell: ({ row }) => <OrderStatusBadge status={row.original.status} />,
       },
       {
-        header: "Payment",
-        cell: ({ row }) => (
-          <PaymentStatusBadge status={row.original.paymentStatus} />
-        ),
-      },
-      {
         header: "Date",
         cell: ({ row }) => formatDate(row.original.createdAt),
       },
@@ -152,15 +137,6 @@ const AdminOrdersPage = () => {
           { label: "Shipped", value: OrderStatus.SHIPPED },
           { label: "Delivered", value: OrderStatus.DELIVERED },
           { label: "Cancelled", value: OrderStatus.CANCELLED },
-        ],
-      },
-      {
-        id: "paymentStatus",
-        label: "Payment",
-        type: "single-select",
-        options: [
-          { label: "Pending", value: PaymentStatus.PENDING },
-          { label: "Paid", value: PaymentStatus.PAID },
         ],
       },
     ],

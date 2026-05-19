@@ -12,6 +12,10 @@ export enum PaymentStatus {
   PAID = "PAID",
 }
 
+export enum PaymentMethod {
+  COD = "COD",
+}
+
 export interface IOrderCustomer {
   id: string;
   name: string;
@@ -56,19 +60,13 @@ export interface ISellerOrder {
   items: ISellerOrderItem[];
 }
 
-export interface IOrderPayment {
-  transactionId: string;
-  stripeEventId: string | null;
-  paymentGatewayData: unknown;
-  createdAt: Date;
-}
-
 export interface IOrder {
   id: string;
   customerId: string;
   totalAmount: number;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
+  paymentMethod: PaymentMethod;
   shippingName: string;
   shippingPhone: string;
   shippingAddress: string;
@@ -76,10 +74,8 @@ export interface IOrder {
   note?: string | null;
   createdAt: Date;
   updatedAt: Date;
-
   customer: IOrderCustomer;
   sellerOrders: ISellerOrder[];
-  payment?: IOrderPayment | null;
 }
 
 export interface IMeta {
@@ -92,10 +88,4 @@ export interface IMeta {
 export interface IOrderResponse {
   data: IOrder[];
   meta: IMeta;
-}
-
-export interface IPlaceOrderResponse {
-  paymentUrl: string;
-  sessionId: string;
-  orderId: string;
 }
