@@ -51,7 +51,7 @@ export default function MyProfilePage() {
     onError: (err: any) => {
       setServerError(err?.response?.data?.message || "Update failed");
       setImageFile(null);
-      setImagePreview(null);
+      setImagePreview(user?.image || null);
     },
   });
 
